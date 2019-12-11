@@ -11,9 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 
 public class Main extends Application {
 
@@ -27,12 +25,11 @@ public class Main extends Application {
         Button Chair = new Button("Chair");
         Chair.setOnAction(e -> {
             try {
-                URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/");
+                URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1");
                 HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
                 connection2.setRequestMethod("GET");
                 StringBuilder content;
-                try (BufferedReader in = new BufferedReader(
-                        new InputStreamReader(connection2.getInputStream()))) {
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection2.getInputStream()))) {
                     String line;
                     content = new StringBuilder();
                     while ((line = in.readLine()) != null) {
@@ -41,11 +38,11 @@ public class Main extends Application {
                     }
                 }
                 Hashtable light1 = makeHash(content.toString());
-                System.out.println(content.toString());
+//                System.out.println(content.toString());
                 connection2.disconnect();
 
-                System.out.println(content.toString());
-                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1/state/");
+//                System.out.println(content.toString());
+                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1/state/1");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("PUT");
 
@@ -58,8 +55,6 @@ public class Main extends Application {
                     writer.flush();
                     writer.close();
 
-//                    StringBuilder content;
-
                     try (BufferedReader in = new BufferedReader(
                             new InputStreamReader(connection.getInputStream()))) {
                         String line;
@@ -69,7 +64,7 @@ public class Main extends Application {
                             content.append(System.lineSeparator());
                         }
                     }
-                    System.out.println(content.toString());
+//                    System.out.println(content.toString());
                 } finally {
                     connection.disconnect();
                 }
@@ -78,42 +73,6 @@ public class Main extends Application {
                 e2.printStackTrace();
             }
         });
-//        Button Chair2 = new Button("Chair2");
-//        Chair2.setOnAction(e -> {
-//            try {
-//                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1/state");
-//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                connection.setRequestMethod("GET");
-//
-//                String putData = "{\"on\":false}";
-//
-//                byte[] putDataBytes = putData.getBytes(StandardCharsets.UTF_8);
-//                connection.setDoOutput(true);
-//                try (DataOutputStream writer = new DataOutputStream(connection.getOutputStream())) {
-//                    writer.write(putDataBytes);
-//                    writer.flush();
-//                    writer.close();
-//
-//                    StringBuilder content;
-//
-//                    try (BufferedReader in = new BufferedReader(
-//                            new InputStreamReader(connection.getInputStream()))) {
-//                        String line;
-//                        content = new StringBuilder();
-//                        while ((line = in.readLine()) != null) {
-//                            content.append(line);
-//                            content.append(System.lineSeparator());
-//                        }
-//                    }
-//                    System.out.println(content.toString());
-//                } finally {
-//                    connection.disconnect();
-//                }
-//            }
-//            catch (Exception e2){
-//                e2.printStackTrace();
-//            }
-//        });
         HBox hb = new HBox();
         hb.getChildren().add(Chair);
         Scene scn = new Scene(hb);
@@ -126,33 +85,44 @@ public class Main extends Application {
         String k1;
         String v1;
         char[] chars = string.toCharArray();
-        hashHelpRecursive(string, chars);
-
+        hashHelpRecursive(string, 0);
         return new Hashtable();
     }
 
-    public void hashHelpRecursive(String string, char[] chars){
-        String[] s2 = string.split("\\},");
-//        for (int i = 0; i<chars.length; i++) {
-//            if(chars[i] == '{'){
-//                string.split("\\{");
-//            }
-//        }
-        for (String item:s2) {
+    public void hashHelpRecursive(String string, int depth){
+        hashRec(string);
+    }
 
-            String[] item2 = item.split("(:)",2);
-            for(String item3:item2){
-                if(item3.startsWith("{")){
-                    System.out.println(item3);
-                }
-                else {
-//                    System.out.print("    " + item3);
-                    String[] item4 = item3.split("(:)",2);
-                    for (String item5:item4) {
-                        System.out.println("    " + item5);
+    public void hashRec(String string) {
+//        String[] str = string.split("}:",1);
+//        String s2 = string.replaceAll(":\\{","\n\t");
+//        System.out.println(s2);
+        hashMaker(string);
+    }
+
+    public void hashMaker(String string) {
+        //TODO: turn json into hash table, by matching pairs of { }, then cut them off and recurse deeper, until none occur.
+        int starting = 0;
+        int ending = 0;
+        int bracketCounter = 0;
+        char[] chars = string.toCharArray();
+        if(string.contains("\\{") || string.contains("}")) {
+            for (int i = 0; i < string.length(); i++) {
+                if (chars[i] == '{') {
+                    if(bracketCounter == 0) {
+                        starting = i;
                     }
+                    bracketCounter++;
+                }
+                if (chars[i] == '}') {
+                    ending = i;
                 }
             }
+            hashRec(string.substring(starting, ending));
+            //TODO: handle adding to hashMap (containing a hashmap).
+        }
+        else{
+            //TODO: handle adding to hashMap (deepest level).
         }
     }
 }
