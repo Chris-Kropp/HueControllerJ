@@ -25,7 +25,7 @@ public class Main extends Application {
         Button Chair = new Button("Chair");
         Chair.setOnAction(e -> {
             try {
-                URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1");
+                URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/");
                 HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
                 connection2.setRequestMethod("GET");
                 StringBuilder content;
@@ -94,10 +94,69 @@ public class Main extends Application {
     }
 
     public void hashRec(String string) {
-//        String[] str = string.split("}:",1);
-//        String s2 = string.replaceAll(":\\{","\n\t");
-//        System.out.println(s2);
-        hashMaker(string);
+        hashHelp(string);
+    }
+
+    public void hashHelp(String string){
+        int depth = 0;
+        boolean run = true;
+        String[] nstring = string.split(",");
+        for (String str:nstring) {
+            String[] str2 = str.split("\\{");
+            if(str2.length > 1) {
+//                if (str.startsWith("{")) {
+//                    depth--;
+//                    run = false;
+//                    for (String str3 : str2) {
+//                        for (int i = 0; i < depth; i++) {
+//                            System.out.print("[]");
+//                        }
+//                        System.out.println(str3);
+//                        depth++;
+//                    }
+//                } else {
+                run = false;
+                depth--;
+                for (String str3 : str2) {
+                    depth++;
+                    for (int i = 0; i < depth; i++) {
+                        System.out.print("⬛");
+                    }
+                    System.out.println(str3.replaceAll("}",""));
+//                    }
+                }
+            }
+//            if(str.contains("{")){
+//                for (int i = 0; i < countChar(str,'{'); i++) {
+//                    depth++;
+//                    System.out.println();
+//                }
+//            }
+            if(run) {
+                for (int i = 0; i < depth; i++) {
+                    System.out.print("⬛");
+                }
+                System.out.println(str.replaceAll("}",""));
+            }
+            run = true;
+            if(str.contains("}")){
+                for (int i = 0; i < countChar(str,'}'); i++) {
+                    depth--;
+                }
+            }
+        }
+    }
+
+    public int countChar(String str, char c)
+    {
+        int count = 0;
+
+        for(int i=0; i < str.length(); i++)
+        {    if(str.charAt(i) == c)
+            count++;
+        }
+
+        return count;
     }
 
     public void hashMaker(String string) {
@@ -110,15 +169,21 @@ public class Main extends Application {
             for (int i = 0; i < string.length(); i++) {
                 if (chars[i] == '{') {
                     if(bracketCounter == 0) {
-                        starting = i;
+                        starting = i+1;
                     }
                     bracketCounter++;
                 }
                 if (chars[i] == '}') {
-                    ending = i;
+                    bracketCounter--;
+                    if (bracketCounter == 0) {
+                        ending = i;
+//                        System.out.println(i);
+                    }
                 }
             }
-            hashRec(string.substring(starting, ending));
+            String nextString = string.replaceFirst("\\{","");
+//            hashRec(string.substring(starting, ending));
+//            System.out.println(string);
             //TODO: handle adding to hashMap (containing a hashmap).
         }
         else{
