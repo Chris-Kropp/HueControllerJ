@@ -21,6 +21,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+
         Button Chair = new Button("Chair");
         Chair.setOnAction(e -> {
             try {
@@ -64,8 +65,7 @@ public class Main extends Application {
                 } finally {
                     connection.disconnect();
                 }
-            }
-            catch (Exception e2) {
+            } catch (Exception e2) {
                 e2.printStackTrace();
             }
         });
@@ -81,15 +81,15 @@ public class Main extends Application {
         String k1;
         String v1;
         char[] chars = string.toCharArray();
-        structureReturn(string);
+        returnStructured(string);
         return new Hashtable();
     }
 
-    public void structureReturn(String string) {
+    public void returnStructured(String string) {
         int depth = 0;
         boolean run = true;
         String[] nstring = string.split(",");
-        for (String str:nstring) {
+        for (String str : nstring) {
             String[] str2 = str.split("\\{");
             if (str2.length > 1) {
                 run = false;
@@ -99,19 +99,18 @@ public class Main extends Application {
                     for (int i = 0; i < depth; i++) {
                         System.out.print("⬛");
                     }
-                    System.out.println(str3.replaceAll("}",""));
+                    System.out.println(str3.replaceAll("}", ""));
                 }
             }
-
             if (run) {
                 for (int i = 0; i < depth; i++) {
                     System.out.print("⬛");
                 }
-                System.out.println(str.replaceAll("}",""));
+                System.out.println(str.replaceAll("}", ""));
             }
             run = true;
             if (str.contains("}")) {
-                for (int i = 0; i < countChar(str,'}'); i++) {
+                for (int i = 0; i < countChar(str, '}'); i++) {
                     depth--;
                 }
             }
@@ -120,9 +119,9 @@ public class Main extends Application {
 
     public int countChar(String str, char c) {
         int count = 0;
-        for (int i=0; i < str.length(); i++) {
+        for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == c)
-            count++;
+                count++;
         }
         return count;
     }
