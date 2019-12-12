@@ -21,11 +21,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-
         Button Chair = new Button("Chair");
         Chair.setOnAction(e -> {
             try {
-                URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1");
+                URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/");
                 HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
                 connection2.setRequestMethod("GET");
                 StringBuilder content;
@@ -38,10 +37,8 @@ public class Main extends Application {
                     }
                 }
                 Hashtable light1 = makeHash(content.toString());
-//                System.out.println(content.toString());
                 connection2.disconnect();
 
-//                System.out.println(content.toString());
                 URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1/state/1");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("PUT");
@@ -64,12 +61,11 @@ public class Main extends Application {
                             content.append(System.lineSeparator());
                         }
                     }
-//                    System.out.println(content.toString());
                 } finally {
                     connection.disconnect();
                 }
             }
-            catch (Exception e2){
+            catch (Exception e2) {
                 e2.printStackTrace();
             }
         });
@@ -80,49 +76,54 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public Hashtable makeHash(String string){
+    public Hashtable makeHash(String string) {
         Hashtable<String, Integer> ht = new Hashtable<String, Integer>();
         String k1;
         String v1;
         char[] chars = string.toCharArray();
-        hashHelpRecursive(string, 0);
+        structureReturn(string);
         return new Hashtable();
     }
 
-    public void hashHelpRecursive(String string, int depth){
-        hashRec(string);
-    }
-
-    public void hashRec(String string) {
-//        String[] str = string.split("}:",1);
-//        String s2 = string.replaceAll(":\\{","\n\t");
-//        System.out.println(s2);
-        hashMaker(string);
-    }
-
-    public void hashMaker(String string) {
-        //TODO: turn json into hash table, by matching pairs of { }, then cut them off and recurse deeper, until none occur.
-        int starting = 0;
-        int ending = 0;
-        int bracketCounter = 0;
-        char[] chars = string.toCharArray();
-        if(string.contains("\\{") || string.contains("}")) {
-            for (int i = 0; i < string.length(); i++) {
-                if (chars[i] == '{') {
-                    if(bracketCounter == 0) {
-                        starting = i;
+    public void structureReturn(String string) {
+        int depth = 0;
+        boolean run = true;
+        String[] nstring = string.split(",");
+        for (String str:nstring) {
+            String[] str2 = str.split("\\{");
+            if (str2.length > 1) {
+                run = false;
+                depth--;
+                for (String str3 : str2) {
+                    depth++;
+                    for (int i = 0; i < depth; i++) {
+                        System.out.print("⬛");
                     }
-                    bracketCounter++;
-                }
-                if (chars[i] == '}') {
-                    ending = i;
+                    System.out.println(str3.replaceAll("}",""));
                 }
             }
-            hashRec(string.substring(starting, ending));
-            //TODO: handle adding to hashMap (containing a hashmap).
+
+            if (run) {
+                for (int i = 0; i < depth; i++) {
+                    System.out.print("⬛");
+                }
+                System.out.println(str.replaceAll("}",""));
+            }
+            run = true;
+            if (str.contains("}")) {
+                for (int i = 0; i < countChar(str,'}'); i++) {
+                    depth--;
+                }
+            }
         }
-        else{
-            //TODO: handle adding to hashMap (deepest level).
+    }
+
+    public int countChar(String str, char c) {
+        int count = 0;
+        for (int i=0; i < str.length(); i++) {
+            if (str.charAt(i) == c)
+            count++;
         }
+        return count;
     }
 }
