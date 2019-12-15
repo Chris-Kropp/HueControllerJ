@@ -3,7 +3,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Main extends Application {
+    Hashtable dataHash = new Hashtable();
 
     public static void main(String[] args) {
         launch(args);
@@ -40,11 +40,11 @@ public class Main extends Application {
                 Hashtable light1 = makeHash(content.toString());
                 connection2.disconnect();
 
-                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1/state/1");
+                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/2/state/");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("PUT");
 
-                String putData = "{\"on\":true}";
+                String putData = "{\"on\":false}";
 
                 byte[] putDataBytes = putData.getBytes(StandardCharsets.UTF_8);
                 connection.setDoOutput(true);
@@ -86,6 +86,9 @@ public class Main extends Application {
     }
 
     public void returnStructured(String string) {
+        ArrayList<String> currentKey = new ArrayList<>();
+        int cDepth = 0;
+        ArrayList obj = new ArrayList();
         int depth = 0;
         boolean run = true;
         String[] nstring = string.split(",");
@@ -96,16 +99,26 @@ public class Main extends Application {
                 depth--;
                 for (String str3 : str2) {
                     depth++;
+
                     for (int i = 0; i < depth; i++) {
-                        System.out.print("⬛");
+//                        System.out.print("⬛");
+                        str3 = "⬛" + str3;
                     }
+                    currentKey.add(str3.replaceAll("}", ""));
                     System.out.println(str3.replaceAll("}", ""));
+                    String[] strsplit = str3.split(":");
+                    if (strsplit.length == 1) {
+                        cDepth = depth;
+
+                    }
                 }
             }
             if (run) {
                 for (int i = 0; i < depth; i++) {
-                    System.out.print("⬛");
+//                    System.out.print("⬛");
+                    str = "⬛" + str;
                 }
+                currentKey.add(str.replaceAll("}", ""));
                 System.out.println(str.replaceAll("}", ""));
             }
             run = true;
@@ -115,6 +128,7 @@ public class Main extends Application {
                 }
             }
         }
+        prnt(currentKey);
     }
 
     public int countChar(String str, char c) {
@@ -124,5 +138,19 @@ public class Main extends Application {
                 count++;
         }
         return count;
+    }
+
+    public void prnt(ArrayList ckey){
+        int prevDepth = 0;
+        Hashtable ht = new Hashtable();
+        String prevHash;
+        for (Object str:ckey) {
+            String item = (String) str;
+            //TODO: Check if depth has decreased from the previous depth.
+            if ((item.endsWith(":"))) {
+                System.out.println(item.replaceAll("\"","").replace(":","").replaceAll("⬛",""));
+                ht.put(item.replaceAll("\"","").replace(":","").replaceAll("⬛",""), new Hashtable<>());
+            }
+        }
     }
 }
