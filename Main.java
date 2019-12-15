@@ -140,17 +140,46 @@ public class Main extends Application {
         return count;
     }
 
+    //TODO: this should probably be done recursively
     public void prnt(ArrayList ckey){
+        ArrayList<String> keys = new ArrayList<>();
         int prevDepth = 0;
         Hashtable ht = new Hashtable();
-        String prevHash;
+        String prevKey;
         for (Object str:ckey) {
             String item = (String) str;
             //TODO: Check if depth has decreased from the previous depth.
+
             if ((item.endsWith(":"))) {
-                System.out.println(item.replaceAll("\"","").replace(":","").replaceAll("⬛",""));
-                ht.put(item.replaceAll("\"","").replace(":","").replaceAll("⬛",""), new Hashtable<>());
+                item = item.replaceAll("\"","").replace(":","").replaceAll("⬛","");
+                ht.put(item, new Hashtable<>());
+                if(keys.size()-1 == index){
+                    index++;
+                    keys.add(item);
+                }
+                else{
+                    keys.get(index) =
+                }
+            }
+
+            else{
+                if (countChar(item, '⬛') < prevDepth){
+                    index--;
+//                ((Hashtable) ht.get(histList.get(index))).put();
+                }
+
+                else if (countChar(item, '⬛') > prevDepth){
+
+                }
+
+                else if (countChar(item, '⬛') == prevDepth){
+
+                }
             }
         }
     }
+
+//    public void prnnt(Hashtable ht)
+
+    int index = 0;
 }
