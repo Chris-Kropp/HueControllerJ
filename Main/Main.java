@@ -1,3 +1,5 @@
+package Main;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,10 +23,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+
         Button Chair = new Button("Chair");
 
         try {
-            URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/");
+            URL url2 = new URL(Master.bridgeURL);
             HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
             connection2.setRequestMethod("GET");
             StringBuilder content;
@@ -47,35 +50,58 @@ public class Main extends Application {
 
         Chair.setOnAction(e -> {
             try {
-                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/2/state/");
+                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1/state/");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("PUT");
-
                 String putData = "{\"on\":false}";
-                StringBuilder c2;
-
                 byte[] putDataBytes = putData.getBytes(StandardCharsets.UTF_8);
                 connection.setDoOutput(true);
-                try (DataOutputStream writer = new DataOutputStream(connection.getOutputStream())) {
-                    writer.write(putDataBytes);
-                    writer.flush();
-                    writer.close();
-
-                    try (BufferedReader in = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream()))) {
-                        String line;
-                        c2 = new StringBuilder();
-                        while ((line = in.readLine()) != null) {
-                            c2.append(line);
-                            c2.append(System.lineSeparator());
-                        }
-                    }
-                } finally {
-                    connection.disconnect();
-                }
-            } catch (Exception e2) {
-                e2.printStackTrace();
+                DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+                writer.write(putDataBytes);
+                writer.flush();
+                writer.close();
+                connection.getInputStream();
+                connection.disconnect();
             }
+            catch (Exception eas) {
+                eas.printStackTrace();
+            }
+
+
+
+//            try {
+//                URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/1/state/");
+//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                connection.setRequestMethod("PUT");
+//
+//                String putData = "{\"on\":false}";
+//                StringBuilder c2;
+//
+//                byte[] putDataBytes = putData.getBytes(StandardCharsets.UTF_8);
+//                connection.setDoOutput(true);
+//                try (DataOutputStream writer = new DataOutputStream(connection.getOutputStream())) {
+//                    writer.write(putDataBytes);
+//                    writer.flush();
+//                    writer.close();
+//
+//                    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+////                        String line;
+////                        c2 = new StringBuilder();
+////                        while ((line = in.readLine()) != null) {
+////                            c2.append(line);
+////                            c2.append(System.lineSeparator());
+////                        }
+//                    }
+//                } finally {
+//                    connection.disconnect();
+//                }
+//            } catch (Exception e2) {
+//                e2.printStackTrace();
+//            }
+
+
+
+
         });
         HBox hb = new HBox();
         hb.getChildren().add(Chair);
