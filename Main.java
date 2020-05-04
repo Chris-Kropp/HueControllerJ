@@ -21,30 +21,38 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-
         Button Chair = new Button("Chair");
+
+        try {
+            URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/");
+            HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+            connection2.setRequestMethod("GET");
+            StringBuilder content;
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection2.getInputStream()))) {
+                String line;
+                content = new StringBuilder();
+                while ((line = in.readLine()) != null) {
+                    content.append(line);
+                    content.append(System.lineSeparator());
+                }
+            }
+//            System.out.println(content);
+//            Hashtable light1 = makeHash(content.toString());
+
+            connection2.disconnect();
+        }
+        catch (Exception e2) {
+        e2.printStackTrace();
+        }
+
         Chair.setOnAction(e -> {
             try {
-                URL url2 = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/");
-                HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
-                connection2.setRequestMethod("GET");
-                StringBuilder content;
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection2.getInputStream()))) {
-                    String line;
-                    content = new StringBuilder();
-                    while ((line = in.readLine()) != null) {
-                        content.append(line);
-                        content.append(System.lineSeparator());
-                    }
-                }
-                Hashtable light1 = makeHash(content.toString());
-                connection2.disconnect();
-
                 URL url = new URL("http://192.168.0.20/api/1dum7N67DnTLeFjxGcZrQHp38RmniQE86jjPR06R/lights/2/state/");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("PUT");
 
                 String putData = "{\"on\":false}";
+                StringBuilder c2;
 
                 byte[] putDataBytes = putData.getBytes(StandardCharsets.UTF_8);
                 connection.setDoOutput(true);
@@ -56,10 +64,10 @@ public class Main extends Application {
                     try (BufferedReader in = new BufferedReader(
                             new InputStreamReader(connection.getInputStream()))) {
                         String line;
-                        content = new StringBuilder();
+                        c2 = new StringBuilder();
                         while ((line = in.readLine()) != null) {
-                            content.append(line);
-                            content.append(System.lineSeparator());
+                            c2.append(line);
+                            c2.append(System.lineSeparator());
                         }
                     }
                 } finally {
@@ -105,7 +113,7 @@ public class Main extends Application {
                         str3 = "⬛" + str3;
                     }
                     currentKey.add(str3.replaceAll("}", ""));
-                    System.out.println(str3.replaceAll("}", ""));
+//                    System.out.println(str3.replaceAll("}", ""));
                     String[] strsplit = str3.split(":");
                     if (strsplit.length == 1) {
                         cDepth = depth;
@@ -119,7 +127,7 @@ public class Main extends Application {
                     str = "⬛" + str;
                 }
                 currentKey.add(str.replaceAll("}", ""));
-                System.out.println(str.replaceAll("}", ""));
+//                System.out.println(str.replaceAll("}", ""));
             }
             run = true;
             if (str.contains("}")) {
@@ -142,41 +150,46 @@ public class Main extends Application {
 
     //TODO: this should probably be done recursively
     public void prnt(ArrayList ckey){
-        ArrayList<String> keys = new ArrayList<>();
-        int prevDepth = 0;
-        Hashtable ht = new Hashtable();
-        String prevKey;
-        for (Object str:ckey) {
-            String item = (String) str;
-            //TODO: Check if depth has decreased from the previous depth.
-
-            if ((item.endsWith(":"))) {
-                item = item.replaceAll("\"","").replace(":","").replaceAll("⬛","");
-                ht.put(item, new Hashtable<>());
-                if(keys.size()-1 == index){
-                    index++;
-                    keys.add(item);
-                }
-                else{
-                    keys.get(index) =
-                }
-            }
-
-            else{
-                if (countChar(item, '⬛') < prevDepth){
-                    index--;
+        System.out.println("one");
+//        for (Object s : ckey){
+//            System.out.println((String) s);
+//        }
+//        ArrayList<String> keys = new ArrayList<>();
+//        int prevDepth = 0;
+//        Hashtable ht = new Hashtable();
+//        String prevKey;
+//        for (Object str:ckey) {
+//            String item = (String) str;
+//            TODO: Check if depth has decreased from the previous depth.
+//
+//            if ((item.endsWith(":"))) {
+//                item = item.replaceAll("\"","").replace(":","").replaceAll("⬛","");
+//                ht.put(item, new Hashtable<>());
+//                if(keys.size()-1 == index){
+//                    index++;
+//                    keys.add(item);
+//                }
+//                else{
+//                    keys.get(index) =
+//                }
+//
+//            }
+//
+//            else{
+//                if (countChar(item, '⬛') < prevDepth){
+//                    index--;
 //                ((Hashtable) ht.get(histList.get(index))).put();
-                }
-
-                else if (countChar(item, '⬛') > prevDepth){
-
-                }
-
-                else if (countChar(item, '⬛') == prevDepth){
-
-                }
-            }
-        }
+//                }
+//
+//                else if (countChar(item, '⬛') > prevDepth){
+//
+//                }
+//
+//                else if (countChar(item, '⬛') == prevDepth){
+//
+//                }
+//            }
+//        }
     }
 
 //    public void prnnt(Hashtable ht)
